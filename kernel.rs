@@ -1,13 +1,32 @@
 #![crate_type="staticlib"]
 #![feature(no_std, lang_items)]
+#![feature(const_fn)]
 #![feature(core, core_str_ext)]
 #![no_std]
 
 extern crate core;
+use core::mem::size_of_val;
 use core::str::StrExt;
+
+mod gdt;
+use gdt::*;
 
 const VID_START: usize = 0xb8000;
 static HELLO: &'static str = "Hello Rust Kernel.";
+
+extern "C" {
+    fn load_gdt(addr: &GDT);
+}
+
+fn setup_gdt() {
+    let gdt_struct = GDT {
+        size: (size_of_val(&gdt::GDT_ARR) - 1) as u16,
+        addr: &gdt::GDT_ARR as *const GDTEntry };
+
+    unsafe {
+        load_gdt(&gdt_struct);
+    }
+}
 
 fn clear_screen() {
     let mut cursor = VID_START as *mut u8;
@@ -24,6 +43,7 @@ fn clear_screen() {
 /// Called from assembly as soon as possible
 #[no_mangle]
 pub extern "C" fn kmain() {
+    setup_gdt();
     clear_screen();
 
     for i in 0..25 {
