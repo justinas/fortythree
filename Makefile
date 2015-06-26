@@ -19,7 +19,7 @@ kernel: link.ld loader.o kernel.o
 loader.o: loader.s
 	nasm -f elf32 -g -o $@ $^
 
-kernel.o: kernel.rs libcore.rlib
+kernel.o: kernel.rs gdt.rs libcore.rlib
 	rustc -L. $(RUST_FLAGS) $(RUST_FREESTANDING_FLAGS) -C opt-level=0 --emit obj kernel.rs
 
 libcore.rlib:
