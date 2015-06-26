@@ -1,18 +1,17 @@
 #![crate_type="staticlib"]
 #![feature(no_std, lang_items)]
 #![feature(const_fn)]
-#![feature(core, core_str_ext)]
+#![feature(core, core_slice_ext, core_str_ext)]
 #![no_std]
 
 extern crate core;
 use core::mem::size_of_val;
-use core::str::StrExt;
 
 mod gdt;
 use gdt::*;
-
-const VID_START: usize = 0xb8000;
-static HELLO: &'static str = "Hello Rust Kernel.";
+mod tui;
+mod utils;
+pub use utils::memcpy;
 
 extern "C" {
     fn load_gdt(addr: &GDT);
@@ -28,39 +27,16 @@ fn setup_gdt() {
     }
 }
 
-fn clear_screen() {
-    let mut cursor = VID_START as *mut u8;
-    for _ in 0..80*25 {
-        unsafe {
-            *cursor = ' ' as u8;
-            cursor = cursor.offset(1);
-            *cursor = 0x00;
-            cursor = cursor.offset(1);
-        }
-    }
-}
-
 /// Called from assembly as soon as possible
 #[no_mangle]
 pub extern "C" fn kmain() {
     setup_gdt();
-    clear_screen();
 
-    for i in 0..25 {
-        unsafe {
-            // skip to the required line
-            let mut cursor = (VID_START as *mut u8).offset(i * 80 * 2);
-            for b in HELLO.bytes() {
-                    *cursor = b;
-                    cursor = cursor.offset(1);
-                    *cursor = 0x07;
-                    cursor = cursor.offset(1);
-
-                // delay 
-                for _ in 0..1<<15 {
-                }
-            }
-        }
+    unsafe {
+        let mut con = &mut tui::CONSOLE;
+        con.write("Hello world.\n");
+        con.write("I'm just testing really long strings to see if linebreaks are applied correctly to them. ");
+        con.write("What I want to do next is implement some scrolling and after that this console UI will be cool enough.");
     }
 }
 
