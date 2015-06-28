@@ -1,5 +1,5 @@
+use core::mem;
 use core::slice::SliceExt;
-use core::str::StrExt;
 
 const MEM_START: *mut u8 = 0xb8000 as *mut u8;
 const DEFAULT_COLOR: u8 = 0x07;
@@ -52,8 +52,8 @@ impl Console {
         }
     }
 
-    pub fn write(&mut self, buf: &str) {
-        for b in buf.bytes() {
+    pub fn write(&mut self, buf: &[u8]) {
+        for &b in buf {
             if self.x >= 80 {
                 self.x = 0;
                 self.y += 1;
@@ -76,5 +76,9 @@ impl Console {
         unsafe {
             self.flush();
         }
+    }
+
+    pub fn write_str(&mut self, buf: &str) {
+        self.write(unsafe { mem::transmute(buf) })
     }
 }

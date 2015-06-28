@@ -1,7 +1,7 @@
 #![crate_type="staticlib"]
 #![feature(no_std, lang_items)]
 #![feature(const_fn)]
-#![feature(core, core_slice_ext, core_str_ext)]
+#![feature(core, core_slice_ext)]
 #![no_std]
 
 extern crate core;
@@ -34,9 +34,9 @@ pub extern "C" fn kmain() {
 
     unsafe {
         let mut con = &mut tui::CONSOLE;
-        con.write("Hello world.\n");
-        con.write("I'm just testing really long strings to see if linebreaks are applied correctly to them. ");
-        con.write("What I want to do next is implement some scrolling and after that this console UI will be cool enough.");
+        con.write_str("Hello world.\n");
+        con.write_str("I'm just testing really long strings to see if linebreaks are applied correctly to them. ");
+        con.write_str("What I want to do next is implement some scrolling and after that this console UI will be cool enough.");
     }
 }
 
