@@ -5,7 +5,7 @@
 #![no_std]
 
 extern crate core;
-use core::mem::size_of_val;
+use core::mem;
 
 mod gdt;
 use gdt::*;
@@ -19,7 +19,7 @@ extern "C" {
 
 fn setup_gdt() {
     let gdt_struct = GDT {
-        size: (size_of_val(&gdt::GDT_ARR) - 1) as u16,
+        size: (mem::size_of_val(&gdt::GDT_ARR) - 1) as u16,
         addr: &gdt::GDT_ARR as *const GDTEntry };
 
     unsafe {

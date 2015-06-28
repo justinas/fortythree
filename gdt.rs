@@ -42,7 +42,7 @@ pub struct GDTEntry {
     pub base_middle: u8,
     pub access: u8,
     pub lim_flags: u8,
-    pub base_high: u8
+    pub base_high: u8,
 }
 
 impl GDTEntry {
