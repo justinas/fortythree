@@ -1,7 +1,5 @@
 bits 32
 
-section .data
-
 section .text
     ;multiboot spec
     align 4
@@ -13,8 +11,8 @@ global load_gdt
 load_gdt:
     mov eax, [esp+4]
     lgdt [eax]
-    jmp 0x08:reload_segments
-reload_segments:
+    jmp 0x08:.reload_segments
+.reload_segments:
     mov ax, 0x10
     mov ds, ax
     mov es, ax
@@ -24,13 +22,21 @@ reload_segments:
     ret
 
 global start
+extern setup_gdt
+extern setup_idt
 extern kmain
 start:
-    cli 
+    cli
+
     mov esp, stack_space
+    call setup_gdt
+    call setup_idt
+    sti
 
     call kmain
+.halt:
     hlt
+    jmp .halt
 
 section .bss
 resb 8192

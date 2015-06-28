@@ -12,14 +12,14 @@ RUST_FLAGS ?= -C target_cpu=i386 --target i686-unknown-linux-gnu -g
 # Flags required for Rust to play nice in a bare-bones environment
 RUST_FREESTANDING_FLAGS ?= -C no-stack-check -Z force-overflow-checks=off
 
-kernel: link.ld loader.o kernel.o 
+kernel: link.ld interrupts.o loader.o kernel.o
 	$(LD) -o $@ -T $^
 	$(OBJCOPY) --only-keep-debug $@ $@.sym
 
-loader.o: loader.s
+%.o: %.s
 	nasm -f elf32 -g -o $@ $^
 
-kernel.o: kernel.rs gdt.rs tui.rs libcore.rlib
+kernel.o: kernel.rs gdt.rs idt.rs tui.rs libcore.rlib
 	rustc -L. $(RUST_FLAGS) $(RUST_FREESTANDING_FLAGS) -C opt-level=0 --emit obj kernel.rs
 
 libcore.rlib:
