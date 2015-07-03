@@ -52,6 +52,17 @@ impl Console {
         }
     }
 
+    /// Scrolls one line in the buffer,
+    /// making the 25-th line free for new text.
+    pub fn scroll(&mut self) {
+        unsafe {
+            for i in 0..24 {
+                *self.buffer.get_unchecked_mut(i) = *self.buffer.get_unchecked(i+1)
+            }
+            *self.buffer.get_unchecked_mut(24) = [(0, 0); 80];
+        }
+    }
+
     pub fn write(&mut self, buf: &[u8]) {
         for &b in buf {
             if self.x >= 80 {
@@ -59,7 +70,9 @@ impl Console {
                 self.y += 1;
             }
             if self.y >= 25 {
-                loop {} // scrolling to be implemented
+                self.scroll();
+                self.y = 24;
+                self.x = 0;
             }
             match b {
                 0x0A => {
