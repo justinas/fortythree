@@ -1,5 +1,9 @@
+use core::fmt;
+use core::result::Result;
+use core::result::Result::*;
 use core::mem;
 use core::slice::SliceExt;
+use core::str::StrExt;
 
 const MEM_START: *mut u8 = 0xb8000 as *mut u8;
 const DEFAULT_COLOR: u8 = 0x07;
@@ -91,7 +95,11 @@ impl Console {
         }
     }
 
-    pub fn write_str(&mut self, buf: &str) {
-        self.write(unsafe { mem::transmute(buf) })
+}
+
+impl fmt::Write for Console {
+    fn write_str(&mut self, buf: &str) -> fmt::Result {
+        self.write(buf.as_bytes());
+        Ok(())
     }
 }

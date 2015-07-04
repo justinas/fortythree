@@ -2,10 +2,12 @@
 #![feature(no_std, lang_items)]
 #![feature(asm)]
 #![feature(const_fn)]
-#![feature(core, core_slice_ext)]
+#![feature(core, core_slice_ext, core_str_ext)]
 #![no_std]
 
+#[macro_use]
 extern crate core;
+use core::fmt::Write;
 use core::mem;
 
 mod gdt;
@@ -54,8 +56,7 @@ pub unsafe extern "C" fn interrupt_handler(interrupt_no: i32, err_code: i32) {
     }
 
     let con = &mut tui::CONSOLE;
-    con.write_str("\nInterrupt no: ");
-    con.write(&[(interrupt_no + 48) as u8]);
+    write!(con, "\nInterrupt no: {}", interrupt_no);
 }
 
 /// Called from assembly as soon as possible
@@ -64,9 +65,9 @@ pub extern "C" fn kmain() {
 
     unsafe {
         let mut con = &mut tui::CONSOLE;
-        con.write_str("Hello world.\n");
-        con.write_str("I'm just testing really long strings to see if linebreaks are applied correctly to them. ");
-        con.write_str("What I want to do next is implement some scrolling and after that this console UI will be cool enough.");
+        write!(con, "Hello world.\n");
+        write!(con, "I'm just testing really long strings to see if linebreaks are applied correctly to them. ");
+        write!(con, "What I want to do next is implement some scrolling and after that this console UI will be cool enough.");
     }
 }
 
