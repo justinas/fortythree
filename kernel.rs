@@ -1,4 +1,4 @@
-#![crate_type="staticlib"]
+#![crate_type="lib"]
 #![feature(no_std, lang_items)]
 #![feature(asm)]
 #![feature(const_fn)]
