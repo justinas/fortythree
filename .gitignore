@@ -13,3 +13,8 @@
 # Our own binary
 kernel
 kernel.sym
+
+# Exclude only our own .a,
+# as we need libcompiler-rt.a and libmorestack.a
+# pre-compiled.
+libkernel.a
