@@ -1,14 +1,15 @@
-#![crate_type="lib"]
+#![crate_type="staticlib"]
 #![feature(no_std, lang_items)]
 #![feature(asm)]
 #![feature(const_fn)]
-#![feature(core, core_slice_ext, core_str_ext)]
+#![feature(core, core_prelude, core_slice_ext, core_str_ext)]
 #![no_std]
 
 #[macro_use]
 extern crate core;
 use core::fmt::Write;
 use core::mem;
+use core::prelude::*;
 
 mod gdt;
 use gdt::*;
