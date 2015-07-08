@@ -1,3 +1,4 @@
+AR = i386-elf-ar
 GDB = i386-elf-gdb
 LD = i386-elf-ld
 RANLIB = i386-elf-ranlib
@@ -9,7 +10,7 @@ QEMU_FLAGS ?=
 
 RUST_TREE ?= ~/src/rustc-nightly
 # Common flags for our Rust builds
-RUST_FLAGS ?= -C target_cpu=i386 --target i686-unknown-linux-gnu -g
+RUST_FLAGS ?= -C target_cpu=i386 --target i686-unknown-linux-gnu -C ar=$(AR) -g
 # Flags required for Rust to play nice in a bare-bones environment
 RUST_FREESTANDING_FLAGS ?= -C no-stack-check -Z force-overflow-checks=off
 
