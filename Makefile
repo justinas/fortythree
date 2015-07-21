@@ -14,9 +14,13 @@ RUST_FLAGS ?= -C target_cpu=i386 --target i686-unknown-linux-gnu -C ar=$(AR) -g
 # Flags required for Rust to play nice in a bare-bones environment
 RUST_FREESTANDING_FLAGS ?= -C no-stack-check -Z force-overflow-checks=off
 
+all: kernel kernel.sym
+
 kernel: link.ld interrupts.o loader.o libkernel.a
 	$(LD) --gc-sections -o $@ -T $^
-	$(OBJCOPY) --only-keep-debug $@ $@.sym
+
+kernel.sym: kernel
+	$(OBJCOPY) --only-keep-debug $^ $@
 
 %.o: %.s
 	nasm -f elf32 -g -o $@ $^
@@ -33,7 +37,7 @@ run: kernel
 debug: QEMU_FLAGS += -S -s
 debug: run
 
-gdb: kernel
+gdb: kernel.sym
 	$(GDB) -x gdbinit
 
 clean:
